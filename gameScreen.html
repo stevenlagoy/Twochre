@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body { font-family: "Comic Sans MS", "Comic Sans"; text-align: center; margin: 50px; }
+        input, select, button { margin: 10px; padding: 5px; }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body style="background-color:grey">
+    <button onclick="exitGame()">Exit Game</button>
+    <button onclick="newGame()">New Game</button>
+    <button onclick="window.location.href='rules.html'">Read Rules</button>
+    <button>Report Bug</button>
+    <br>
+    <br>
+    <br>
+    <div class="container">
+        <!-- Game Board -->
+        <div class="game-board-container">
+            <img src="game_board_circle.png" alt="Game Board" width="800" height="800">
+        </div>
+        <!-- Buttons -->
+        <div class="button-container">
+            <button onclick="startGame()">Start Game</button>
+            <button onclick="deal(playerDeck, players)">Deal</button>
+            <button>Display Cards</button>
+        </div>
+
+        <!-- Players -->
+        <div class="player-container player0">
+            <!-- User Player Character -->
+            <div>
+                <img src="score_0040.png" id="player0_scoreCard">
+            </div>
+            <div class="card-display">
+                <img src="" id="player0_displayCard">
+            </div>
+            <div class="image-container">
+                <img src="player_frame.png" class="overlay">
+                <img src="purple_player.png" class="player-model">
+                <img src="player_background_white.png" class="background">
+            </div>
+            <br>
+            <label>You</label>
+        </div>
+        <div class="user-hand-container">
+            <img src="player_hand.png">
+        </div>
+
+        <div class="player-container player1">
+            <div>
+                <img src="score_0040.png" id="player1_scoreCard">
+            </div>
+            <div class="card-display">
+                <img src="" id="player1_displayCard">
+            </div>
+            <div class="image-container">
+                <img src="player_frame.png" class="overlay">
+                <img src="blue_player.png" class="player-model">
+                <img src="player_background_checker.png" class="background">
+            </div>
+            <br>
+            <label>Anna</label>
+        </div>
+
+        <div class="player-container player2">
+            <div>
+                <img src="score_0040.png" id="player2_scoreCard">
+            </div>
+            <div class="card-display">
+                <img src="" id="player2_displayCard">
+            </div>
+            <div class="image-container">
+                <img src="player_frame.png" class="overlay">
+                <img src="green_player.png" class="player-model">
+                <img src="player_background_stars.png" class="background">
+            </div>
+            <br>
+            <label>Tom</label>
+        </div>
+        
+        <div class="player-container player3">
+            <div>
+                <img src="score_0040.png" id="player3_scoreCard">
+            </div>
+            <div class="card-display">
+                <img src="" id="player3_displayCard">
+            </div>
+            <div class="image-container">
+                <img src="player_frame.png" class="overlay">
+                <img src="yellow_player.png" class="player-model">
+                <img src="player_background_sky.png" class="background">
+            </div>
+            <br>
+            <label>Lucy</label>
+        </div>
+
+        <div class="player-container player4">
+            <div>
+                <img src="score_0040.png" id="player4_scoreCard">
+            </div>
+            <div class="card-display">
+                <img src="" id="player4_displayCard">
+            </div>
+            <div class="image-container">
+                <img src="player_frame.png" class="overlay">
+                <img src="red_player.png" class="player-model">
+                <img src="player_background_trees.png" class="background">
+            </div>
+            <br>
+            <label>Matt</label>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

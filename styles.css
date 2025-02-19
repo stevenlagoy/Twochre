@@ -1,0 +1,104 @@
+/* Main container for the board and players */
+.container {
+  position: relative;
+  width: 800px;  /* Match game board size */
+  height: 800px;
+  margin: auto;
+}
+
+/* Game board centered */
+.game-board-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.button-container {
+  position: relative;
+  top: 75%;
+  left: 0%;
+  z-index: 3;
+}
+.button-container button {
+  width: 100px;
+}
+
+/* Image container for players */
+.image-container {
+  position: relative;
+  display: inline-block;
+  width: 110px;
+  height: 120px;
+}
+
+/* Ensuring images fill their containers */
+.image-container img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Background and overlay setup */
+.background {
+  width: 100%;
+  height: 83%;
+  z-index: 1;
+}
+
+.player-model {
+  z-index: 3;
+}
+
+.overlay {
+  z-index: 5;
+}
+
+/* Position players around the board */
+.player-container {
+  position: absolute;
+}
+
+.card-display {
+  position: absolute;
+  display: inline-block;
+  width: 90px;
+  height: 135px;
+
+}
+.card-display img {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Adjust each player's card separately */
+#player0_displayCard { top: -275%; left: 11%; transform: rotate(0deg); }
+#player1_displayCard { top: -70%; left: -210%; transform: rotate(-53deg); }
+#player2_displayCard { top: 50%; left: -210%; transform: rotate(53deg); }
+#player3_displayCard { top: 50%; left: 230%; transform: rotate(-53deg); }
+#player4_displayCard { top: -70%; left: 230%; transform: rotate(53deg); }
+
+.user-hand-container {
+  position: absolute;
+  width: 447px;
+  height: 135px;
+  top: 85%;
+  left: 22%;
+}
+
+.user-hand-container img {
+  width: 100%;
+  height: 100%;
+}
+
+/* Equidistant placement around the central board */
+.player0 { top: 102%; left: 50%; transform: translate(-50%, 0); }
+.player1 { top: 80%; left: 105%; transform: translate(-50%, -50%); }
+.player2 { top: 15%; left: 105%; transform: translate(-50%, -50%); }
+.player3 { top: 15%; left: -5%; transform: translate(-50%, -50%); }
+.player4 { top: 80%; left: -5%; transform: translate(-50%, -50%); }
