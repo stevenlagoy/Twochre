@@ -7,13 +7,52 @@ function exitGame(){
     }
 }
 function newGame(){
-    let response = confirm("Restarting now will end the current game. Are you sure?");
+    let response = confirm("Beginning a new game now will end the current game. Are you sure?");
     if(response){
         window.location.href='gameScreen.html';
     }
+    document.getElementById("")
 }
 function startGame(){
     // create and place decks
+    clearTable();
+    setCardPile(cardBack);
+    setEventText("Decks divided and shuffled");
+}
+function clearTable(){
+    setCardPile(noCard);
+    setFlippedPile(noCard);
+    for(player in players){
+        players[player]._displayCard = noCard;
+        players[player].displayCard();
+    }
+    setEventText("Welcome!");
+}
+window.onload = function() {
+    clearTable();
+};
+function setEventText(text){
+    document.getElementById("eventsLabel").innerHTML = text;
+}
+function setCardPile(card){
+    document.getElementById("cardPile").src = card.imageLoc;
+}
+function setFlippedPile(card){
+    document.getElementById("flippedPile").src = card.imageLoc;
+}
+function updateCardCounter(cards){
+    document.getElementById("cardsCounter").innerHTML = cards.length;
+}
+function flipCard(cards, flippedCards){
+    let nextCard = cards.pop();
+    setFlippedPile(nextCard);
+    if(cards.length > 0){
+        setCardPile(cardBack);
+    }
+    else setCardPile(noCard);
+    updateCardCounter(cards);
+    flippedCards.push(nextCard);
+    return nextCard;
 }
 function selectRoles(cards, players){
     // deal the player deck out
@@ -22,7 +61,7 @@ function selectRoles(cards, players){
     // else redeal
     
     while(true){
-
+        break;
     }
 }
 
@@ -42,6 +81,8 @@ function Card(suit, value, imageLoc){
     this.value = value;
     this.imageLoc = imageLoc;
 }
+const noCard = new Card(null, 0, "cards/blank.png");
+const cardBack = new Card(null, 0, "cards/card_back.png");
 const cards = [
     new Card(suits[0], 2,  "cards/2_of_hearts.png"),
     new Card(suits[0], 3,  "cards/3_of_hearts.png"),
@@ -111,8 +152,9 @@ const trumpDeck = [ // twos (sans tooker), threes, fives, sevens, eights
     cards[26], cards[27], cards[29], cards[31], cards[32],
     cards[39], cards[40], cards[42], cards[44], cards[45]
 ];
+const flippedDeck = []; // cards from the trump deck which have been flipped already
 const utilityDeck = [ // fours, sixes, jokers
-    cards[2], cards[4],
+    cards[2],  cards[4],
     cards[15], cards[17],
     cards[28], cards[29],
     cards[41], cards[42],
@@ -169,7 +211,6 @@ function Player(name, number, isPlayer=false){
         // select a random card from the player's hand
     }
     this.displayCard = function(){
-        console.log(this._displayCard);
         document.getElementById(`player${this.number}_displayCard`).src = this._displayCard.imageLoc;
     }
 }

@@ -23,11 +23,30 @@
         <div class="game-board-container">
             <img src="game_board_circle.png" alt="Game Board" width="800" height="800">
         </div>
+
+        <div class="event-label-container">
+            <label id="eventsLabel" class="event-label"></label>
+        </div>
+
         <!-- Buttons -->
         <div class="button-container">
-            <button onclick="startGame()">Start Game</button>
-            <button onclick="deal(playerDeck, players)">Deal</button>
+            <button onclick="startGame()" id="start_game_button">Start Game</button>
+            <button onclick="deal(playerDeck, players)" id="deal_button">Deal</button>
+            <button onclick="flipCard(trumpDeck, flippedDeck)" id="flip_card_button">Reveal Trump Card</button>
             <button>Display Cards</button>
+        </div>
+
+        <!-- Center Piles -->
+        <div class="piles-container">
+            <img src="" class="flipped-pile", id="flippedPile">
+            <img src="" class="card-pile", id="cardPile">
+        </div>
+        <!-- Cards Number Counter -->
+        <div class="cards-number-container">
+            <div class="cards-number-counter">
+                <img src="card_number_counter.png" class="cards-number-counter">
+                <label class="cards-number-counter" id="cardsCounter"></label>
+            </div>
         </div>
 
         <!-- Players -->
