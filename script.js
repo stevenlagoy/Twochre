@@ -1,74 +1,136 @@
-const numPlayers = 5;
+/* UTILITY FUNCTIONS */
 
-function exitGame(){
-    let response = confirm("Exiting now will end the current game. Are you sure?");
-    if(response){
-        window.location.href='index.html';
-    }
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
-function newGame(){
-    let response = confirm("Beginning a new game now will end the current game. Are you sure?");
-    if(response){
-        window.location.href='gameScreen.html';
-    }
-    document.getElementById("")
-}
-function startGame(){
-    // create and place decks
-    clearTable();
-    setCardPile(cardBack);
-    setEventText("Decks divided and shuffled");
-}
-function clearTable(){
-    setCardPile(noCard);
-    setFlippedPile(noCard);
-    for(player in players){
-        players[player]._displayCard = noCard;
-        players[player].displayCard();
-    }
-    setEventText("Welcome!");
-}
-window.onload = function() {
-    clearTable();
+String.prototype.toTitleCase = function () {
+    return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 };
-function setEventText(text){
-    document.getElementById("eventsLabel").innerHTML = text;
-}
-function setCardPile(card){
-    document.getElementById("cardPile").src = card.imageLoc;
-}
-function setFlippedPile(card){
-    document.getElementById("flippedPile").src = card.imageLoc;
-}
-function updateCardCounter(cards){
-    document.getElementById("cardsCounter").innerHTML = cards.length;
-}
-function flipCard(cards, flippedCards){
-    let nextCard = cards.pop();
-    setFlippedPile(nextCard);
-    if(cards.length > 0){
-        setCardPile(cardBack);
-    }
-    else setCardPile(noCard);
-    updateCardCounter(cards);
-    flippedCards.push(nextCard);
-    return nextCard;
-}
-function selectRoles(cards, players){
-    // deal the player deck out
-    // if a player recieved the tooker
-    // then that player becomes cat herder
-    // else redeal
-    
-    while(true){
-        break;
-    }
-}
 
+/* CLASS DEFINITIONS */
 function Suit(name, color){
     this.name = name;
     this.color = color;
 }
+
+function Card(suit, value, imageLoc){
+    this.suit = suit;
+    this.value = value;
+    this.imageLoc = imageLoc;
+}
+
+function Player(name, number, isUser=false){
+    this.name = name;
+    this.number = number;
+    this.isUser = isUser;
+    this._score = 0;
+    this._tricksWon = 0;
+    this.hand = [];
+    this.role = "";
+    this.setScore = function(value){
+        this._score = value;
+        this.updateScoreCounter();
+    }
+    this.addScore = function(value){
+        this._score += value;
+        this.updateScoreCounter();
+    }
+    this.updateScoreCounter = function(){
+        let visualScore = this._score % 4;
+        if(scorePointValues.hasOwnProperty(visualScore)){
+            document.getElementById("player" + this.number + "_scoreCard").src = scorePointValues[visualScore];
+        }
+    }
+    this.addTricksWon = function(tricks = 1){
+        this._tricksWon += tricks;
+    }
+    this._displayCard = null;
+    this.displayCard = function(card){
+        if(card){
+            this._displayCard = card;
+            document.getElementById(`player${this.number}_displayCard`).src = this._displayCard.imageLoc;
+        }
+    }
+    this.chooseCard = function(roundTrump, trickTrump) {
+        return new Promise((resolve) => {
+            if (!this.isUser) {
+                // AI selects a card automatically
+                let chosenCard = this.hand.pop();
+                resolve(chosenCard);
+                return;
+            }
+            console.log("user's turn");
+    
+            // Allow user to select a card
+            setVisibleButtons("play_card_button");
+    
+            document.getElementById("play_card_button").onclick = () => {
+                // 
+                if (!selectedCard) {
+                    alert("Please select a card first!");
+                    return;
+                }
+    
+                // Find the selected card in hand
+                let selectedIndex = parseInt(selectedCard.replace("player_hand_card", ""));
+                if (isNaN(selectedIndex) || selectedIndex < 0 || selectedIndex >= this.hand.length) return;
+
+                let chosenCard = this.hand.splice(selectedIndex, 1)[0]; // Remove from hand
+                selectedCard = null; // Reset selection
+                setVisibleButtons(); // Hide play button
+
+                document.getElementById(`player_hand_card${selectedIndex}`).src = noCard.imageLoc;
+                selectedCard = null;
+
+                resolve(chosenCard); // Return the chosen card
+            };
+        });
+    };
+    this.placeCard = async function(roundTrump, trickTrump) {
+        let card = await this.chooseCard(roundTrump, trickTrump);
+        console.log("Player played:", card);
+        this.displayCard(card);
+        placedCards.push(card);
+    };
+    
+}
+
+/* GLOBAL CONSTANTS AND VARIABLES */
+const numPlayers = 5;
+const buttonIDs = [
+    "start_game_button",
+    "determine_roles_button",
+    "deal_button",
+    "flip_card_button",
+    "display_cards_button",
+    "start_round_button",
+    "play_card_button"
+]
+let rolesDetermined = false;
+let stratChosen = false;
+let selectedCard = null;
+const flippedDeck = [];
+const placedCards = [];
+const players = [
+    new Player("You", 0, true),
+    new Player("Anna", 1),
+    new Player("Tom", 2),
+    new Player("Lucy", 3),
+    new Player("Matt", 4)
+]
+const activePlayers = players;
+const userPlayer = players[0];
+const scorePointValues = {
+    0: "score_0040.png",
+    0.5: "score_05.png",
+    1: "score_10.png",
+    1.5: "score_15.png",
+    2: "score_20.png",
+    2.5: "score_25.png",
+    3: "score_30.png",
+    3.5: "score_35.png"
+};
+// CREATE SUITS
 const suits = [
     new Suit("hearts", "red"),
     new Suit("diamonds", "red"),
@@ -76,11 +138,7 @@ const suits = [
     new Suit("clubs", "black")
 ];
 
-function Card(suit, value, imageLoc){
-    this.suit = suit;
-    this.value = value;
-    this.imageLoc = imageLoc;
-}
+/* CREATE DECKS */
 const noCard = new Card(null, 0, "cards/blank.png");
 const cardBack = new Card(null, 0, "cards/card_back.png");
 const cards = [
@@ -152,7 +210,6 @@ const trumpDeck = [ // twos (sans tooker), threes, fives, sevens, eights
     cards[26], cards[27], cards[29], cards[31], cards[32],
     cards[39], cards[40], cards[42], cards[44], cards[45]
 ];
-const flippedDeck = []; // cards from the trump deck which have been flipped already
 const utilityDeck = [ // fours, sixes, jokers
     cards[2],  cards[4],
     cards[15], cards[17],
@@ -160,83 +217,300 @@ const utilityDeck = [ // fours, sixes, jokers
     cards[41], cards[42],
     cards[52], cards[53]
 ];
-function deal(cards, players){
-    let numPlayers = players.length;
-    let dealtCards = Array.from({ length: numPlayers }, () => []); // Initialize an empty array for each player
 
-    for(let i = 0; i < cards.length; i++){
-        dealtCards[i % numPlayers].push(cards[i]); // Distribute cards round-robin
-    }
-    // Assign cards to players
-    for(let i = 0; i < numPlayers; i++){
-        players[i].hand = dealtCards[i];
-    }
-    // Return the leftover cards (if any)
-    let remainingCards = cards.slice(numPlayers * Math.floor(cards.length / numPlayers));
-    return remainingCards;
-}
-
-const scorePointValues = {
-    0: "score_0040.png",
-    0.5: "score_05.png",
-    1: "score_10.png",
-    1.5: "score_15.png",
-    2: "score_20.png",
-    2.5: "score_25.png",
-    3: "score_30.png",
-    3.5: "score_35.png"
+/* GAME CONTROL FUNCTIONS */
+window.onload = function() {
+    clearTable();
+    setVisibleButtons("start_game_button");
 };
-function Player(name, number, isPlayer=false){
-    this.name = name;
-    this.number = number;
-    this.isPlayer = isPlayer;
-    this._score = 0;
-    this.hand = [];
-    this.setScore = function(value){
-        this._score = value;
-        this.updateScoreCounter();
-    }
-    this.addScore = function(value){
-        this._score = this._score + value;
-        this.updateScoreCounter();
-    }
-    this.updateScoreCounter = function(){
-        let visualScore = this._score % 4;
-        if(scorePointValues.hasOwnProperty(visualScore)){
-            document.getElementById("player" + this.number + "_scoreCard").src = scorePointValues[visualScore];
-        }
-    }
-    this._displayCard = null;
-    this.selectCard = function(){
-        // select a random card from the player's hand
-    }
-    this.displayCard = function(){
-        document.getElementById(`player${this.number}_displayCard`).src = this._displayCard.imageLoc;
+function exitGame(){
+    let response = confirm("Exiting now will end the current game. Are you sure?");
+    if(response){
+        window.location.href='index.html';
     }
 }
-const players = [
-    new Player("You", 0, true),
-    new Player("Anna", 1),
-    new Player("Tom", 2),
-    new Player("Lucy", 3),
-    new Player("Matt", 4)
-];
-
-function determineTrickWinner(trumpSuit, cards, firstPlayed = 0){
-    // assign a score to each card, then return the card with the highest score
-    trickTrump = cards[firstPlayed].suit;
-    let scores = [];
-    for(let card in cards){
-        //console.log(cards[card]);
-        if(cards[card].suit.name == trumpSuit.name){
-            scores[card] = 20 + cards[card].value;
-        }
-        else if(cards[card].suit.name == trickTrump.name){
-            scores[card] = 0 + cards[card].value;
-        }
-        else scores[card] = 0;
+function newGame(){
+    let response = confirm("Beginning a new game now will end the current game. Are you sure?");
+    if(response){
+        window.location.href='gameScreen.html';
     }
-    console.log(scores)
+}
+function startGame(){
+    // create and place decks
+    clearTable();
+    setCardPile(cardBack);
+    shuffle(playerDeck);
+    shuffle(trumpDeck);
+    updateCardCounter(trumpDeck);
+    setEventText("Decks divided and shuffled");
+    rolesDetermined = false;
+    setVisibleButtons("determine_roles_button");
+}
+function clearTable(){
+    setCardPile(noCard);
+    setFlippedPile(noCard);
+    clearPlacedCards();
+    for(let i = 0; i < 5; i++){
+        //console.log(`player_hand_card${i}`);
+        document.getElementById(`player_hand_card${i}`).src = noCard.imageLoc;
+    }
+    setEventText("Welcome! Click 'Start Game' to complete setup");
+}
+function clearPlacedCards(){
+    placedCards.length = 0;
+    players.forEach(player => player.displayCard(noCard));
+}
+
+/* UI Helper Functions */
+function setVisibleButtons(buttons = []){
+    // if only one button is passed, make a singleton array
+    if(typeof(buttons) == "string") buttons = [buttons];
+    buttonIDs.forEach(button => document.getElementById(button).style.display = "none");
+    buttons.forEach(button => document.getElementById(button).style.display = "inline-block");
+}
+function setEventText(text){
+    document.getElementById("eventsLabel").innerHTML = text;
+}
+function setCardPile(card){
+    document.getElementById("cardPile").src = card.imageLoc;
+}
+function setFlippedPile(card){
+    document.getElementById("flippedPile").src = card.imageLoc;
+}
+function updateCardCounter(cards){
+    document.getElementById("cardsCounter").innerHTML = cards.length;
+}
+async function determineRoles(players, deck){
+    setVisibleButtons();
+    setEventText("Determining roles...");
+    await delay(200);
+    let counter = 0;
+    for(let card of deck){
+        players[counter % players.length].displayCard(card);
+
+        if(card.suit.name === "hearts" && card.value === 2){
+            //console.log((counter+2) % players.length);
+            assignRoles(players, counter);
+            await delay(1500);
+            rolesDetermined = true;
+            break;
+        }
+        counter++;
+        await delay(200);
+    }
+    if(rolesDetermined) prepareDeal(deck, players);
+}
+function assignRoles(players, index) {
+    players[index % players.length].role = "cat_herder";
+    players[(index + 1) % players.length].role = "dealer";
+    players[(index + 2) % players.length].role = "lead";
+    console.log();
+    setEventText(`${players[index % players.length].name} ${players[index % players.length].isUser ? "are" : "is"} the Cat Herder. ${players[(index + 1) % players.length].name} ${players[(index+1) % players.length].isUser ? "are" : "is"} the Dealer.`);
+}
+async function deal(cards, players){
+    setVisibleButtons();
+    setEventText("Dealing...");
+    shuffle(cards);
+    let hands = Array.from({ length: numPlayers }, () => []);
+    cards.forEach((card, i) => hands[i % numPlayers].push(card));
+    players.forEach((player, i) => player.hand = hands[i]);
+    for(let player of players){
+        player.displayCard(cardBack);
+        await delay(500);
+    }
+    players.forEach(player => player.displayCard(noCard));
+    setEventText("Cards dealt");
+    await showPlayerCards();
+    setVisibleButtons("start_round_button");
+}
+async function showPlayerCards(){
+    for(let i = 0; i < 5; i++){
+        console.log(`player_hand_card${i}`);
+        document.getElementById(`player_hand_card${i}`).src = cardBack.imageLoc;
+    }
+    await delay(500);
+    document.getElementById("player_hand_card4").src = userPlayer.hand[4].imageLoc;
+    stratChosen = true;
+}
+function flipCard(cards, flippedCards){
+    let nextCard = cards.pop();
+    setFlippedPile(nextCard);
+    setCardPile(cards.length > 0 ? cardBack : noCard);
+    updateCardCounter(cards);
+    flippedCards.push(nextCard);
+    return nextCard;
+}
+
+/* PLAYER ACTIONS */
+
+
+function shuffle(array) {
+    // Fisher-Yates Shuffle
+    let currentIndex = array.length;
+  
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+        // Pick a remaining element...
+        let randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] =
+            [array[randomIndex], array[currentIndex]];
+    }
+}
+function prepareDeal(cards, players){
+
+    setVisibleButtons();
+    shuffle(cards);
+    let dealer;
+    for(let player of players){
+        player.displayCard(noCard);
+        if(player.role == "dealer") dealer = player;
+    }
+    if(dealer.isUser){
+        // the user player should be the one to deal the cards
+        setVisibleButtons("deal_button");
+    }
+    else{
+        // another player is the dealer 
+        deal(cards, players);
+    }
+}
+async function doRound(){
+    flipCard(trumpDeck, flippedDeck);
+    let roundTrump = flippedDeck[0].suit;
+    setEventText(`Trump is ${roundTrump.name.toTitleCase()}`);
+    setVisibleButtons();
+    for(let i = 0; i < 5; i++){
+        await doTrick(roundTrump);
+        await delay(2000);
+        clearPlacedCards();
+    }
+
+    let pointsEarned = updatePlayerPoints();
+    displayEarnedPoints(pointsEarned);
+    console.log("round done");
+}
+function updatePlayerPoints(){
+    let pointsEarned = [];
+    let singlesCount = 0;
+    for(let player of activePlayers){
+        if(player._tricksWon === 1){
+            singlesCount++;
+        }
+        if(player._tricksWon === 2){
+            player.addScore(1);
+            pointsEarned.push(1);
+        }
+        else if(player._tricksWon === 4){
+            player.addScore(2);
+            pointsEarned.push(2);
+        }
+        else if(player._tricksWon === 5){
+            player.addScore(0.5);
+            pointsEarned.push(0.5);
+        }
+        else {
+            pointsEarned.push(0);
+        }
+    }
+    if(singlesCount === numPlayers-1){
+        activePlayers.forEach(player => player.addScore(-1));
+        pointsEarned = Array(5).fill(-1);
+    }
+    return pointsEarned;
+}
+function displayEarnedPoints(pointsEarned) {
+    let result = "";
+    for (let i = 0; i < pointsEarned.length; i++) {
+        result += `${activePlayers[i].name} earned ${pointsEarned[i]} points. `;
+    }
+    console.log(result);
+    setEventText(result);
+}
+async function doTrick(roundTrump){
+    let leader = activePlayers.find(player => player.role === "lead");
+    await delay(1500);
+
+    // have each player select and play their card in turn
+    for(let i = leader.number, count = 0; count < numPlayers; i = (i + 1) % numPlayers, count++){
+        setEventText(`${activePlayers[i].name}${activePlayers[i].isUser ? "r" : "'s"} turn to play`);
+        await delay(1500);
+        await activePlayers[i].placeCard();
+        await delay(250);
+    }
+
+    // Determine the winner
+    let winningCard = determineTrickWinner(roundTrump, placedCards);
+    let winningIndex = placedCards.findIndex(card => card.suit.name === winningCard.suit.name && card.value === winningCard.value);
+    if (winningIndex === -1) {
+        console.error("Winning card not found in placedCards!");
+        return;
+    }
+    let winningPlayer = activePlayers[winningIndex];
+    winningPlayer.addTricksWon();
+
+    setEventText(`${winningPlayer.name} win${winningPlayer.isUser ? "" : "s"} the trick!`);
+}
+
+// Function to handle card selection
+function selectCard(cardId) {
+    // Deselect the previously selected card
+    if (selectedCard) {
+        document.getElementById(selectedCard).classList.remove("selected");
+    }
+
+    // Select the new card (or deselect if clicking the same one)
+    if (selectedCard === cardId) {
+        selectedCard = null; // Deselect if clicked again
+    } else {
+        selectedCard = cardId;
+        if(true || stratChosen){
+            document.getElementById(selectedCard).classList.add("selected");
+        }
+    }
+}
+// Add event listeners to each hand card
+document.addEventListener("DOMContentLoaded", () => {
+    for (let i = 0; i < 5; i++) {
+        const cardElement = document.getElementById(`player_hand_card${i}`);
+        cardElement.addEventListener("click", () => selectCard(`player_hand_card${i}`));
+    }
+});
+function playCard() {
+    if (selectedCard) {
+        console.log("Playing card:", selectedCard);
+        // Implement logic to move the card to the play area
+    } else {
+        alert("Please select a card to play!");
+    }
+}
+
+function determineTrickWinner(trumpSuit, cards, firstPlayed = 0) {
+    console.log(cards);
+    let trickTrump = cards[firstPlayed].suit;
+    let scores = [];
+    
+    for (let i = 0; i < cards.length; i++) {
+        let card = cards[i];
+        let cardValue = card.value;
+        
+        if (card.suit.name === trumpSuit.name) {
+            if (card.value === 11) {
+                scores[i] = 100; // Jack of trump suit is highest
+            } else if (card.suit.color === trumpSuit.color && card.value === 11) {
+                scores[i] = 90; // Jack of opposite suit in same color is second highest
+            } else {
+                scores[i] = 20 + card.value; // Regular trump cards
+            }
+        } else if (card.suit.name === trickTrump.name) {
+            scores[i] = card.value; // Followed suit cards use normal value
+        } else {
+            scores[i] = 0; // Off-suit cards have no value
+        }
+    }
+    
+    console.log(scores);
     let maxScore = Math.max(...scores);
     let maxPosition = scores.indexOf(maxScore);
     return cards[maxPosition];

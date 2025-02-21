@@ -19,9 +19,9 @@
 .event-label-container {
   position: absolute;
   z-index: 5;
-  top: 10%;
-  left: 13%;
-  width: 600px;
+  top: 15%;
+  left: 28%;
+  width: 350px;
   height: 100px;
   display: flex;
   justify-content: center;
@@ -72,7 +72,7 @@
 .cards-number-container {
   position: absolute;
   top: 35%;
-  left: 56%;
+  left: 56.5%;
   display: flex;
   width: 40px;
   height: 40px;
@@ -161,13 +161,33 @@
   position: absolute;
   width: 447px;
   height: 135px;
-  top: 85%;
+  top: 84%;
   left: 22%;
+  display: flex;
+  justify-content: left;
+  align-items: left;
 }
-
-.user-hand-container img {
+.hand-mat {
   width: 100%;
   height: 100%;
+  position: absolute;
+  z-index: 2;
+}
+.hand-card0, .hand-card1, .hand-card2, .hand-card3, .hand-card4 {
+  position: absolute;
+  width: 80px;
+  height: 120px;
+  z-index: 2;
+  top: 5%;
+}
+.hand-card0 { left: 1.8%; }
+.hand-card1 { left: 20.5%; }
+.hand-card2 { left: 39.5%; }
+.hand-card3 { left: 58.5%; }
+.hand-card4 { left: 80%; }
+
+.selected {
+  border: 3px solid yellow; /* Highlight with a yellow border */
 }
 
 /* Equidistant placement around the central board */

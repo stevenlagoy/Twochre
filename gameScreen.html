@@ -31,9 +31,12 @@
         <!-- Buttons -->
         <div class="button-container">
             <button onclick="startGame()" id="start_game_button">Start Game</button>
-            <button onclick="deal(playerDeck, players)" id="deal_button">Deal</button>
+            <button onclick="determineRoles(activePlayers, playerDeck)" id="determine_roles_button">Determine Roles</button>
+            <button onclick="deal(playerDeck, activePlayers)" id="deal_button">Deal</button>
             <button onclick="flipCard(trumpDeck, flippedDeck)" id="flip_card_button">Reveal Trump Card</button>
-            <button>Display Cards</button>
+            <button onclick="" id="display_cards_button">Display Cards</button>
+            <button onclick="doRound()" id="start_round_button">Start Round</button>
+            <button onclick="playCard()" id="play_card_button">Play Card</button>
         </div>
 
         <!-- Center Piles -->
@@ -67,7 +70,12 @@
             <label>You</label>
         </div>
         <div class="user-hand-container">
-            <img src="player_hand.png">
+            <img src="player_hand.png" class="hand-mat">
+            <img src="" id="player_hand_card0" class="hand-card0">
+            <img src="" id="player_hand_card1" class="hand-card1">
+            <img src="" id="player_hand_card2" class="hand-card2">
+            <img src="" id="player_hand_card3" class="hand-card3">
+            <img src="" id="player_hand_card4" class="hand-card4">
         </div>
 
         <div class="player-container player1">
