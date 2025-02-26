@@ -623,7 +623,7 @@ function updatePlayerPoints(){
         player._tricksWon = 0;
         //console.log(pointsEarned);
     }
-    if(singlesCount === numPlayers-1){
+    if(singlesCount === numPlayers){
         activePlayers.forEach(player => player.addScore(-1));
         pointsEarned = Array(5).fill(-1);
     }
