@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Play Twochre!</title>
     <style>
         body { font-family: "Comic Sans MS", "Comic Sans"; text-align: center; margin: 50px; }
         input, select, button { margin: 10px; padding: 5px; }
@@ -31,14 +31,16 @@
         <!-- Buttons -->
         <div class="button-container">
             <button onclick="startGame()" id="start_game_button">Start Game</button>
-            <button onclick="determineRoles(activePlayers, playerDeck)" id="determine_roles_button">Determine Roles</button>
-            <button onclick="deal(playerDeck, activePlayers)" id="deal_button">Deal</button>
-            <button onclick="flipCard(trumpDeck, flippedDeck)" id="flip_card_button">Reveal Trump Card</button>
-            <button onclick="" id="display_cards_button">Display Cards</button>
+            <button onclick="determineRoles()" id="determine_roles_button">Determine Roles</button>
+            <button onclick="deal()" id="deal_button">Deal</button>
+            <button onclick="flipCard()" id="flip_card_button">Reveal Trump Card</button>
             <button onclick="doRound()" id="start_round_button">Start Round</button>
             <button onclick="playCard()" id="play_card_button">Play Card</button>
-            <button onclick="prepareDeal(playerDeck, activePlayers)" id="prepare_round_button">Prepare Next Round</button>
-            <button onclick="breakTie(winners, playerDeck)" id="break_tie_button">Break Tie</button>
+            <button onclick="prepareDeal()" id="prepare_round_button">Prepare Next Round</button>
+            <button onclick="breakTie()" id="break_tie_button">Break Tie</button>
+            <button onclick="catLasso()" id="cat_lasso_button">Cat Lasso</button>
+            <button onclick="catBurgle()" id="cat_burgle_button">Cat Burgle</button>
+            <button onclick="catNap()" id="cat_nap_button">Cat Nap</button>
         </div>
 
         <!-- Center Piles -->
@@ -94,6 +96,9 @@
             </div>
             <br>
             <label>Anna</label>
+            <div class="lasso-display">
+                <img src="" id="player1_lassoCard">
+            </div>
         </div>
 
         <div class="player-container player2">
@@ -110,6 +115,9 @@
             </div>
             <br>
             <label>Tom</label>
+            <div class="lasso-display">
+                <img src="" id="player2_lassoCard">
+            </div>
         </div>
         
         <div class="player-container player3">
@@ -126,6 +134,9 @@
             </div>
             <br>
             <label>Lucy</label>
+            <div class="lasso-display">
+                <img src="" id="player3_lassoCard">
+            </div>
         </div>
 
         <div class="player-container player4">
@@ -142,6 +153,9 @@
             </div>
             <br>
             <label>Matt</label>
+            <div class="lasso-display">
+                <img src="" id="player4_lassoCard">
+            </div>
         </div>
 
     </div>
